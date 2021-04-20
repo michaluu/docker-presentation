@@ -1,0 +1,56 @@
+> Show what is sleep
+sleep 5
+> Start pure debian with sleep 300 as primary process
+docker run -d --name simple_deb debian sleep 300
+> Enter the container and show the inner workings
+docker exec -it simple_deb bash
+ls
+exit
+> Let's create a three tier architecture app
+> Create frontend stright from debian
+touch Dockerfile-debian
+
+```
+FROM debian:buster
+apt update && apt install apache2
+COPY ./public-html/ /var/www/html/
+CMD ["apachectl", "-D", "FOREGROUND"]
+```
+
+docker build -f Dockerfile-debian -t front-debian .
+docker run -d -p 81:80 front-debian
+
+> Use a out-of-the-box apache2 image
+```
+FROM httpd:2.4
+COPY ./public-html/ /usr/local/apache2/htdocs/
+```
+
+docker build -t front-debian .
+docker run -d -p 80:80 front
+
+> Create a simple backend app
+> Create the Dockerfile
+```
+FROM python:3.8-slim-buster
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+```
+
+docker build --tag flask-app .
+
+> Run Docker image
+docker run -d --name backend -p 5000:5000 flask-app
+
+> Add DB to the mix?
+docker run -d --name db -e POSTGRES_PASSWORD=password -p 5432:5432 postgres
+
+> How to automate that?
+> Use docker-compose
