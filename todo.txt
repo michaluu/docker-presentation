@@ -1,0 +1,2 @@
+Wykasuj kontenery o nazwach ktore beda uzywane
+Stworz sobie folder na prezentacje z plikami frontu i backendu

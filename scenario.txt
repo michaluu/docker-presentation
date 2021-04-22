@@ -1,9 +1,7 @@
-> Show what is sleep
-sleep 5
 > Start pure debian with sleep 300 as primary process
-docker run -d --name simple_deb debian sleep 300
+docker run -d --name debian debian sleep 300
 > Enter the container and show the inner workings
-docker exec -it simple_deb bash
+docker exec -it debian bash
 ls
 exit
 > Let's create a three tier architecture app
@@ -12,7 +10,7 @@ touch Dockerfile-debian
 
 ```
 FROM debian:buster
-apt update && apt install apache2
+RUN apt update && apt install -y apache2
 COPY ./public-html/ /var/www/html/
 CMD ["apachectl", "-D", "FOREGROUND"]
 ```
@@ -26,7 +24,7 @@ FROM httpd:2.4
 COPY ./public-html/ /usr/local/apache2/htdocs/
 ```
 
-docker build -t front-debian .
+docker build -t front .
 docker run -d -p 80:80 front
 
 > Create a simple backend app
